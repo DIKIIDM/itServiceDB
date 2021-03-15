@@ -7,6 +7,7 @@
     "doc": "doc"
   },
   "dependencies": {
+    "adm-zip": "^0.5.4",
     "express": "^4.13.1",
     "gulp": "^4.0.2",
     "gulp-riot": "^1.1.5",
