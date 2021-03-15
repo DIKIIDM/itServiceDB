@@ -4,7 +4,7 @@ var express = require('express'),
  //   tApp = require('./dist/riot/app.js'),
     app = express();
 
-app.engine('html', swig.renderFile)
+//app.engine('html', swig.renderFile)
 app.set('view engine', 'html')
 app.set('views',__dirname + '/views')
 app.use(express.static(__dirname + '/public'))
