@@ -2,22 +2,15 @@
   "name": "itservicedb",
   "version": "1.0.0",
   "description": "test project, learning for pitkyaranta it service",
-  "main": "main.js",
-  "directories": {
-    "doc": "doc"
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "adm-zip": "^0.5.4",
     "express": "^4.13.1",
-    "gulp": "^4.0.2",
-    "gulp-riot": "^1.1.5",
     "riot": "^2.2.2",
     "swig": "^1.4.2"
-  },
-  "scripts": {
-    "test": "jest"
-  },
-  "devDependencies": {},
-  "author": "hype",
-  "license": "ISC"
+  }
 }
