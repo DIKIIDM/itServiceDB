@@ -5,9 +5,10 @@ const express = require('express')
 	 
 const app = new express();
 
-app.engine('html',swig.renderFile)
-app.set('view engine', 'html')
-app.set('views',__dirname + '/app/views')
+app.engine('html',swig.renderFile);
+app.set('view engine', 'html');
+app.set('views',__dirname + '/app/views');
+app.use(express.static(__dirname + '/app/public'))
 
 app.get('/',function(req,res) {	
   let data = {
