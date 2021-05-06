@@ -3,21 +3,22 @@
     <button onclick="{add}">
       add
     </button>
-
   </div>
   <table class="table">
     <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Age</th>
+        <th scope="col">firstname</th>
+        <th scope="col">middlename</th>
+        <th scope="col">lastname</th>
       </tr>
     </thead>
     <tbody>
-      <tr each={ client, index in opts.clients}>
+      <tr each={ client, index in clients}>
         <th scope="row"> {index + 1}</th>
-        <td>{client.name}</td>
-        <td>{client.age}</td>
+        <td>{client.firstname}</td>
+        <td>{client.middlename}</td>
+        <td>{client.lastname}</td>
       </tr>
     </tbody>
   </table>
@@ -29,9 +30,13 @@
     }
   </style>
   <script>
+      let self = this;
       //--------------------------------------------------------------
       this.on('mount', function() {
-
+          if (self.opts.clients) {
+              let clients = JSON.parse(self.opts.clients.replace(/&quot;/g,'"'));
+              self.update({clients: clients});
+          }
       });
       //--------------------------------------------------------------
       this.on('unmount', function() {
