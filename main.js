@@ -4,7 +4,7 @@ const express = require('express')
     ,riot = require('riot')
     ,tagClientList = require('./app/public/tags/client_list.tag')
     ,tagClientCard = require('./app/public/tags/client_card.tag')
-    ,Datastore = require('nedb');
+    ,Datastore = require('nedb-promises');
 
 const app = new express();
 const dbUsers = new Datastore({filename: './app/db/nedb/users'});
@@ -18,14 +18,10 @@ app.use(bodyParser.json());
 //-------------------------------------------------------------
 // pages
 //-------------------------------------------------------------
-app.get('/',function(req,res) {
-    let data = {};
-    dbUsers.loadDatabase();
-    dbUsers.find({}, function (err, dbRes) {
-        data = dbRes;
-        let content = riot.render(tagClientList, data);
-        res.render('index', {tagContent: content, clients: JSON.stringify(data)});
-    });
+app.get('/',async function(req,res) {
+    let data = await dbUsers.find({});
+    let content = riot.render(tagClientList, data);
+    res.render('index', {tagContent: content, clients: JSON.stringify(data)});
 })
 //-------------------------------------------------------------
 app.get('/add_user',function(req,res) {
@@ -38,15 +34,13 @@ app.get('/add_user',function(req,res) {
 //-------------------------------------------------------------
 // REST API
 //-------------------------------------------------------------
-app.post('/users',function(req,res) {
+app.post('/users',async function(req,res) {
     let newClient = {};
     newClient.firstname = req.body.firstname;
     newClient.middlename = req.body.middlename;
     newClient.lastname = req.body.lastname;
     newClient.phone = req.body.phone;
-    dbUsers.insert(newClient, function (err, dbRes) {
-
-    });
+    await dbUsers.insert(newClient);
     return res.send({});
 });
 //-------------------------------------------------------------
