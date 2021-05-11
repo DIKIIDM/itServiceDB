@@ -66,7 +66,6 @@
       //--------------------------------------------------------------
       this.submit = async function() {
           //ищем форму
-          let form = document.getElementById("client_form");
           //собираем данные для отправления
           let data = {};
           data.lastname = document.getElementById("input_lastname").value;
@@ -74,13 +73,18 @@
           data.middlename = document.getElementById("input_middlename").value;
           data.phone = document.getElementById("input_phone").value;
           //проверяем
+          let form = document.getElementById("client_form");
           let validity = form.checkValidity();
           if (validity === false) {
 
           } else {
               //отправляем на сервер
               let response = await gateway.insertClient(data);
-              window.open('/',"_self");
+              if (response.success == true) {
+                  window.open('/',"_self");
+              } else {
+                  alert(response.message);
+              }
           }
           //оповещаем что проверили
           form.classList.add('was-validated');

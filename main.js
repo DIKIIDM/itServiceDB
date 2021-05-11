@@ -35,15 +35,28 @@ app.get('/add_user',function(req,res) {
 // REST API
 //-------------------------------------------------------------
 app.post('/users',async function(req,res) {
+    let result = {
+        success: false
+        ,message: ""
+    };
+
     let newClient = {};
     newClient.firstname = req.body.firstname;
     newClient.middlename = req.body.middlename;
     newClient.lastname = req.body.lastname;
     newClient.phone = req.body.phone;
-    await dbUsers.insert(newClient);
-    return res.send({});
+
+    //проверка
+    let clients = await dbUsers.find({phone: newClient.phone});
+    if (clients.length === 0) {
+        dbUsers.insert(newClient, function (err, dbRes) {});
+        result.success = true;
+    } else {
+        result.message = "Ошибка! Такой телефон уже существует";
+    }
+    return res.send(result);
 });
 //-------------------------------------------------------------
 app.listen(3000, function(){
     console.log('server listening on port 3000');
-})
+});
