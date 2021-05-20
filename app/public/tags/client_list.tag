@@ -14,7 +14,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr each={ client, index in clients}>
+      <tr each={ client, index in clients} ondblclick="{edit}" onclick="{select}" >
         <th scope="row"> {index + 1}</th>
         <td>{client.firstname}</td>
         <td>{client.middlename}</td>
@@ -27,6 +27,9 @@
       height: 100px;
       width: 100%;
       background-color: #0dcaf0;
+    }
+    .selected {
+      background-color: lightgrey;
     }
   </style>
   <script>
@@ -47,7 +50,25 @@
       });
       //--------------------------------------------------------------
       this.add = function () {
-          window.open('/add_user',"_self");
+          window.open("/clients/add","_self");
       }
+      //--------------------------------------------------------------
+      this.edit = function(e) {
+          console.log("edit", e.detail, e.item.client);
+          window.open("/clients/" + e.item.client._id,"_self");
+      }
+      //--------------------------------------------------------------
+      this.select = function(e) {
+          //1 убрать старое выделение
+          let activeRows = self.root.getElementsByClassName("selected");
+          if (activeRows.length > 0) {
+              for (let row of activeRows) {
+                  row.classList.remove("selected");
+              }
+          }
+          //2 добавить выделение строки на которую кликнули
+          e.target.parentElement.classList.add("selected");
+      }
+
   </script>
 </client_list>

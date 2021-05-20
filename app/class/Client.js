@@ -1,13 +1,9 @@
 class Client {
-	constructor(pName, pPhone, npNote) {
-		this.id = 1;
-		this.sName = pName;
-		this.sPhone = pPhone; 
-		this.sNote = npNote;
-	}
-	//-----------------------------------------------------------
-	setName(newName) {
-		this.name = newName;
+	constructor(firstname, middlename, lastname, phone) {
+        this.firstname = firstname;
+        this.middlename = middlename;
+        this.lastname = lastname;
+        this.phone = phone;
 	}
 }
 module.exports = Client;

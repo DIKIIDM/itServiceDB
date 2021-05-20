@@ -55,6 +55,14 @@
               function handleForm(event) { event.preventDefault(); }
               form.addEventListener('submit', handleForm);
           }
+          if (self.opts.client) {
+              let client = JSON.parse(self.opts.client.replace(/&quot;/g,'"'));
+
+              document.getElementById("input_lastname").value = client.lastname;
+              document.getElementById("input_firstname").value = client.firstname;
+              document.getElementById("input_middlename").value = client.middlename;
+              document.getElementById("input_phone").value = client.phone;
+          }
       });
       //--------------------------------------------------------------
       this.on('unmount', function() {
