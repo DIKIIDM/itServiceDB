@@ -48,6 +48,8 @@
   </style>
   <script>
       let self = this;
+      let idClient = undefined;
+
       //--------------------------------------------------------------
       this.on('mount', function() {
           if ((typeof window !== 'undefined')) {
@@ -57,11 +59,11 @@
           }
           if (self.opts.client) {
               let client = JSON.parse(self.opts.client.replace(/&quot;/g,'"'));
-
               document.getElementById("input_lastname").value = client.lastname;
               document.getElementById("input_firstname").value = client.firstname;
               document.getElementById("input_middlename").value = client.middlename;
               document.getElementById("input_phone").value = client.phone;
+              idClient = client._id;
           }
       });
       //--------------------------------------------------------------
@@ -86,10 +88,15 @@
           if (validity === false) {
 
           } else {
+              let response;
               //отправляем на сервер
-              let response = await gateway.insertClient(data);
+              if (typeof idClient == 'undefined') {
+                  response = await gateway.insertClient(data);
+              } else {
+                  response = await gateway.updateClient(idClient, data);
+              }
               if (response.success == true) {
-                  window.open('/',"_self");
+                  window.open('/clients',"_self");
               } else {
                   alert(response.message);
               }

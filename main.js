@@ -5,11 +5,10 @@ const express = require('express')
     ,tagClientList = require('./app/public/tags/client_list.tag')
     ,tagClientCard = require('./app/public/tags/client_card.tag')
     ,Client = require('./app/class/Client')
-    ,Dog = require('./app/class/Dog')
     ,Datastore = require('nedb-promises');
 
 const app = new express();
-const dbUsers = new Datastore({filename: './app/db/nedb/users'});
+const dbUsers = Datastore.create({filename: './app/db/nedb/clients'});
 
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
@@ -42,7 +41,7 @@ app.get('/clients/:id',async function(req,res) {
 //-------------------------------------------------------------
 // REST API
 //-------------------------------------------------------------
-app.post('/users',async function(req,res) {
+app.post('/clients',async function(req,res) {
     let result = {
          success: false
         ,message: ""
@@ -63,6 +62,26 @@ app.post('/users',async function(req,res) {
     }
     return res.send(result);
 });
+//-------------------------------------------------------------
+app.put('/clients/:id',async function(req,res) {
+    let result = {
+         success: false
+        ,message: ""
+    };
+    let client = new Client(
+         req.body.firstname
+        ,req.body.middlename
+        ,req.body.lastname
+        ,req.body.phone
+    );
+    dbUsers.update({_id: req.params.id}, client, {}, function(err, dbRes) {
+        console.log(err, dbRes);
+    });
+    result.success = true;
+    return res.send(result);
+});
+
+
 //-------------------------------------------------------------
 app.listen(3000, function(){
     console.log('server listening on port 3000');
