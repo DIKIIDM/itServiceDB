@@ -5,10 +5,12 @@ const express = require('express')
     ,tagClientList = require('./app/public/tags/client_list.tag')
     ,tagClientCard = require('./app/public/tags/client_card.tag')
     ,Client = require('./app/class/Client')
-    ,Datastore = require('nedb-promises');
+    ,Datastore = require('nedb-promises')
+    ,clientRepoNEDB = require('./app/class/ClientRepoNEDB');
 
 const app = new express();
 const dbUsers = Datastore.create({filename: './app/db/nedb/clients'});
+const clientRepo = new clientRepoNEDB(dbUsers);
 
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
@@ -20,7 +22,7 @@ app.use(bodyParser.json());
 // pages
 //-------------------------------------------------------------
 app.get('/clients',async function(req,res) {
-    let data = await dbUsers.find({});
+    let data = await clientRepo.getAll();
     let content = riot.render(tagClientList, data);
     res.render('index', {tagContent: content, clients: JSON.stringify(data)});
 })
@@ -34,7 +36,7 @@ app.get('/clients/add',function(req,res) {
 })
 //-------------------------------------------------------------
 app.get('/clients/:id',async function(req,res) {
-    let data = await dbUsers.findOne({_id: req.params.id});
+    let data = await clientRepo.getOne(req.params.id);
     let content = riot.render(tagClientCard, data);
     res.render('index', {tagContent: content, client: JSON.stringify(data)});
 })
@@ -42,46 +44,28 @@ app.get('/clients/:id',async function(req,res) {
 // REST API
 //-------------------------------------------------------------
 app.post('/clients',async function(req,res) {
-    let result = {
-         success: false
-        ,message: ""
-    };
     let client = new Client(
-                   req.body.firstname
-                  ,req.body.middlename
-                  ,req.body.lastname
-                  ,req.body.phone
-                );
-    //проверка
-    let clients = await dbUsers.find({phone: client.phone});
-    if (clients.length === 0) {
-        dbUsers.insert(client, function (err, dbRes) {});
-        result.success = true;
-    } else {
-        result.message = "Ошибка! Такой телефон уже существует";
-    }
-    return res.send(result);
-});
-//-------------------------------------------------------------
-app.put('/clients/:id',async function(req,res) {
-    let result = {
-         success: false
-        ,message: ""
-    };
-    let client = new Client(
-         req.body.firstname
+         null
+        ,req.body.firstname
         ,req.body.middlename
         ,req.body.lastname
         ,req.body.phone
+        ,clientRepo
     );
-    dbUsers.update({_id: req.params.id}, client, {}, function(err, dbRes) {
-        console.log(err, dbRes);
-    });
-    result.success = true;
-    return res.send(result);
+    return res.send(await client.insert());
 });
-
-
+//-------------------------------------------------------------
+app.put('/clients/:id',async function(req,res) {
+    let client = new Client(
+         req.params.id
+        ,req.body.firstname
+        ,req.body.middlename
+        ,req.body.lastname
+        ,req.body.phone
+        ,clientRepo
+    );
+    return res.send(await client.update());
+});
 //-------------------------------------------------------------
 app.listen(3000, function(){
     console.log('server listening on port 3000');

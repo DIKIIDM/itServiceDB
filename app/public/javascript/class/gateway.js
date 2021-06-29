@@ -9,7 +9,34 @@ class Gateway {
         let self = this;
         return new Promise(function (resolve, reject) {
             let xmlhttp = getXmlHttp();
-            xmlhttp.open('POST', "http://localhost:3000/users", true);
+            xmlhttp.open('POST', "http://localhost:3000/clients", true);
+            xmlhttp.setRequestHeader('Content-Type', "application/json");
+            xmlhttp.timeout = 5000;
+            xmlhttp.onload = function () {
+                if (this.status == 200) {
+                    resolve(JSON.parse(xmlhttp.response));
+                } else {
+                    reject({
+                        status: this.status,
+                        statusText: xmlhttp.statusText
+                    });
+                }
+            };
+            xmlhttp.onerror = function () {
+                reject({
+                    status: this.status,
+                    statusText: xmlhttp.statusText
+                });
+            };
+            xmlhttp.send(JSON.stringify(data));
+        });
+    }
+    //--------------------------------------------------------------------------------
+    updateClient(id, data) {
+        console.log('gateway_edit_client', data);
+        return new Promise(function (resolve, reject) {
+            let xmlhttp = getXmlHttp();
+            xmlhttp.open('PUT', "http://localhost:3000/clients/" + id, true);
             xmlhttp.setRequestHeader('Content-Type', "application/json");
             xmlhttp.timeout = 5000;
             xmlhttp.onload = function () {
